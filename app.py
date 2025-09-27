@@ -3,7 +3,10 @@ import random
 from datetime import datetime, timedelta
 import numpy as np
 
-# ===== COMPREHENSIVE OPHTHALMOLOGY DATABASE (60+ DIAGNOSES) =====
+# Remove this line - you're not using Plotly!
+# import plotly.express as px
+
+# ===== COMPREHENSIVE OPHTHALMOLOGY DATABASE =====
 diagnoses = {
     # RETINA (15 diagnoses)
     "CRAO (Central Retinal Artery Occlusion)": {
