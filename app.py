@@ -721,6 +721,7 @@ with st.sidebar:
         
         if resident_id and resident_id.strip():
             resident_id = resident_id.strip()
+            st.session_state.resident_id = resident_id  # CRITICAL FIX
             initialize_resident_diagnosis_tracking(resident_id)
             st.session_state.resident_tracking[resident_id]["last_activity"] = datetime.now().strftime("%Y-%m-%d %H:%M")
             
@@ -732,6 +733,31 @@ with st.sidebar:
                 ["Adaptive Learning", "Virtual Patients", "Board Exam Prep"]
             )
             st.session_state.current_mode = training_mode
+            
+            # Resident analytics
+            resident_data = st.session_state.resident_tracking[resident_id]
+            accuracy = (resident_data["correct_count"] / resident_data["question_count"] * 100) if resident_data["question_count"] > 0 else 0
+            
+            st.markdown("### 📊 Your Performance")
+            col1, col2 = st.columns(2)
+            with col1:
+                st.metric("Questions", resident_data["question_count"])
+            with col2:
+                st.metric("Accuracy", f"{accuracy:.1f}%")
+            
+            # Progress by category
+            st.markdown("#### 📈 Category Performance")
+            for category, perf in resident_data["category_performance"].items():
+                if perf["total"] > 0:
+                    cat_accuracy = (perf["correct"] / perf["total"] * 100)
+                    st.write(f"**{category}:** {perf['correct']}/{perf['total']}")
+                    st.progress(perf["correct"] / perf["total"])
+    
+    elif user_type == "Program Director":
+        program_id = st.selectbox("Select Program:", list(residency_programs.keys()))
+        if program_id:
+            st.session_state.program_id = program_id  # Also fix for Program Director
+            st.success(f"👨‍🏫 **Program:** {residency_programs[program_id]['name']}")
             
             # Resident analytics
             resident_data = st.session_state.resident_tracking[resident_id]
